@@ -1,0 +1,146 @@
+characters_fixtures = [
+    {
+        "id": 101,
+        "name": "Zorblax",
+        "status": "Alive",
+        "species": "Alien",
+        "type": "Warrior",
+        "gender": "Male",
+        "origin_name": "Zorgon Prime",
+        "location_name": "Zorgon Prime",
+        "episode_ids": [1, 5, 9],
+        "image": "",
+        "rating": 7.5,
+        "created_by_user": True
+    },
+    {
+        "id": 102,
+        "name": "Lumia",
+        "status": "Dead",
+        "species": "Robot",
+        "type": "Assistant",
+        "gender": "Female",
+        "origin_name": "Cyberia",
+        "location_name": "Cyberia",
+        "episode_ids": [2, 4],
+        "image": "",
+        "rating": 6.0,
+        "created_by_user": True
+    },
+    # Objeto con campos faltantes (para probar error)
+    {
+        "id": 103,
+        "name": "Gloop",
+        # "status" falta
+        "species": "Blob",
+        "type": "",
+        "gender": "Unknown",
+        "origin_name": "Swamp Planet",
+        "location_name": "Swamp Planet",
+        "episode_ids": [],
+        "image": "",
+        "rating": 4.0,
+        "created_by_user": True
+    },
+    # Objeto con id duplicado (para probar error)
+    {
+        "id": 101,
+        "name": "Duplicato",
+        "status": "Alive",
+        "species": "Alien",
+        "type": "Explorer",
+        "gender": "Male",
+        "origin_name": "Zorgon Prime",
+        "location_name": "Zorgon Prime",
+        "episode_ids": [3, 6],
+        "image": "",
+        "rating": 5.5,
+        "created_by_user": True
+    },
+    {
+        "id": 104,
+        "name": "Thraxx",
+        "status": "Unknown",
+        "species": "Mutant",
+        "type": "Soldier",
+        "gender": "Male",
+        "origin_name": "Mutant Planet",
+        "location_name": "Battle Zone",
+        "episode_ids": [1, 7, 8],
+        "image": "",
+        "rating": 8.0,
+        "created_by_user": True
+    },
+    # Objeto sin id (para probar error)
+    {
+        # "id" falta
+        "name": "Nameless",
+        "status": "Alive",
+        "species": "Ghost",
+        "type": "",
+        "gender": "Female",
+        "origin_name": "Spirit World",
+        "location_name": "Spirit World",
+        "episode_ids": [],
+        "image": "",
+        "rating": 3.5,
+        "created_by_user": True
+    },
+    {
+        "id": 105,
+        "name": "Fizzle",
+        "status": "Dead",
+        "species": "Gnome",
+        "type": "Magician",
+        "gender": "Male",
+        "origin_name": "Magicland",
+        "location_name": "Magicland",
+        "episode_ids": [2, 3, 5],
+        "image": "",
+        "rating": 7.0,
+        "created_by_user": True
+    },
+    {
+        "id": 106,
+        "name": "Vexy",
+        "status": "Alive",
+        "species": "Cyborg",
+        "type": "Spy",
+        "gender": "Female",
+        "origin_name": "Neo City",
+        "location_name": "Neo City",
+        "episode_ids": [1, 4, 6],
+        "image": "",
+        "rating": 8.5,
+        "created_by_user": True
+    },
+    # Objeto con tipo incorrecto (rating como string)
+    {
+        "id": 107,
+        "name": "Glitch",
+        "status": "Unknown",
+        "species": "Digital",
+        "type": "Hacker",
+        "gender": "Unknown",
+        "origin_name": "Cyber Realm",
+        "location_name": "Cyber Realm",
+        "episode_ids": [],
+        "image": "",
+        "rating": "high",
+        "created_by_user": True
+    },
+    {
+        "id": 108,
+        "name": "Bloop",
+        "status": "Alive",
+        "species": "Blob",
+        "type": "Explorer",
+        "gender": "Unknown",
+        "origin_name": "Swamp Planet",
+        "location_name": "Swamp Planet",
+        "episode_ids": [1, 2],
+        "image": "",
+        "rating": 5.0,
+        "created_by_user": True
+    }
+]
