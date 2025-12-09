@@ -21,35 +21,56 @@ def create_character_blueprint(db):
     
     @bp.post("/characters")
     def postCharacter():
-        pprint('0000000000000')
         data = request.json
 
         if not data or 'name' not in data:
             return jsonify({"error": "Invalid data"}), 400
         
-        # character = CharacterService.createCharacter(data)
-        # CharacterRepository.addCharacter(character)
-    
-        pprint(data)
-        return []
+        character = CharacterService.createCharacter(data)
+        repo.addCharacter(character)
+        return repo.getCharacter(character.id)
+
     
     @bp.put("/characters/<int:id>")
     def putCharacter(id):
-        return repo.getCharacter(id)
         data = request.json
 
         if not data or 'name' not in data:
             return jsonify({"error": "Invalid data"}), 400
+               
+        character = CharacterService.createCharacter(data)
+        if not character:
+            return jsonify({"error": "not found"}), 404
         
-        # character = CharacterService.createCharacter(data)
-        # CharacterRepository.updateCharacter(id, character)
+        repo.updateCharacter(id, character)
 
-        pprint(data)
         return repo.getCharacter(id)
     
+    @bp.patch("/characters/<int:id>")
+    def patchCharacter(id):
+        data = request.json
+
+        if not data:
+            return jsonify({"error": "Invalid data"}), 400
+        
+        character = repo.getCharacter(id)
+        if not character:
+            return jsonify({"error": "not found"}), 404
+        
+        CharacterService.validateUpdateableValues(data)
+
+        editable = CharacterService.createCharacter(character)
+        for key, value in data.items():
+            setattr(editable, key, value)
+        editable.id = id
+
+        repo.updateCharacter(id, editable)
+        return repo.getCharacter(id)
+        
+        
     @bp.delete("/characters/<int:id>")
     def deleteCharacter(id):
-        CharacterRepository.deleteCharacter(id)
+        repo.deleteCharacter(id)
         return [], 204
 
     @bp.errorhandler(Exception)

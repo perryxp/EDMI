@@ -1,4 +1,4 @@
-from Model import Character
+from Model.Character import Character
 
 class CharacterRepository:
     db = None
@@ -16,13 +16,13 @@ class CharacterRepository:
     
     def addCharacter(self, character):
         id = self.__calculateNextId()
-        character['id'] = id
+        character.id = id
         return self.characterCollection.insert_one(
             character.__dict__ if isinstance(character, Character) else character
         )
     
     def updateCharacter(self, id, character):
-        character.pop('id', None)
+        character.id = id
         return self.characterCollection.update_one(
             {'id': id},
             {'$set': character.__dict__ if isinstance(character, Character) else character}            
@@ -32,5 +32,6 @@ class CharacterRepository:
         return self.characterCollection.delete_one({'id': id})
     
     def __calculateNextId(self):
-        id = self.characterCollection.find({}, {'id': 1, '_id': 0}).sort('id', -1).limit(1)
-        return id + 1
+        result = self.characterCollection.find_one({}, {'id': 1, '_id': 0},sort=[('id', -1)])
+        
+        return (result['id'] + 1) if result else 1

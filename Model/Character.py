@@ -1,13 +1,12 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import List
+from dataclasses import fields
 
-
-requiredAttributes = ['name', 'status', 'species', 'gender']
 
 @dataclass
 class Character:
-    id: int
+    # id: int
     name: str
     status: str
     species: str
@@ -17,7 +16,15 @@ class Character:
     location_name: str
     episode_ids: List[int] = field(default_factory=list)
     image: str = ""
-    created_at: datetime = field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     rating: float = 0.0
     created_by_user: bool = True
+
+    @staticmethod
+    def getRequiredAttributes():
+        return ['name', 'status', 'species', 'gender']
+
+    @staticmethod
+    def getEditableAttributes():
+        return ['name', 'status', 'species', 'gender', 'image', 'rating']
 

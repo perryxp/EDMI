@@ -1,15 +1,16 @@
-from Model import Character
-
+from Model.Character import Character
+from pprint import pprint
 class CharacterService:
 
     @staticmethod
     def validateData(data):
-        for field in Character.requiredAttributes:
+        for field in Character.getRequiredAttributes():
             if field not in data:
                 raise ValueError(f"Falta el campo obligatorio: {field}")
             
     @staticmethod
     def createCharacter(data):
+        CharacterService.validateData(data)
         return Character(
             # id = data["id"],
             name = data["name"],
@@ -22,5 +23,17 @@ class CharacterService:
             # episode_ids = _extract_episode_ids(data.get("episode", [])),
             # image = data.get("image", "")
         )
+    
+    @staticmethod
+    def validateUpdateableValues(data):
+        errors = list()
+        editables = Character.getEditableAttributes()
+
+        for key in data:
+            if not key in editables:
+                errors.append(key)
+
+            if errors:
+                raise ValueError(f"Editing fields " + str(errors) + " is not allowed. Only " + str(editables) + " allowed")
     
 
