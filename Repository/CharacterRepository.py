@@ -2,12 +2,10 @@ from Model.Character import Character
 from pymongo import ReturnDocument
 
 class CharacterRepository:
-    db = None
     characterCollection = None
 
     def __init__(self, db):
-        self.db = db
-        self.characterCollection = self.db.getCollection("rick&morty", "characters")
+        self.characterCollection = db.getCollection("rick&morty", "characters")
 
     def getCharacter(self, id):
         return self.characterCollection.find_one({'id': id}, {'_id': 0})
@@ -24,7 +22,10 @@ class CharacterRepository:
         return self.getCharacter(character.id)
     
     def updateCharacter(self, id, character):
-        character.id = id
+        if isinstance(character, Character):
+            character.id = id
+        else:
+            character['id'] = id
         return self.characterCollection.find_one_and_update(
             {'id': id},
             {'$set': character.__dict__ if isinstance(character, Character) else character},

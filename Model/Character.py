@@ -30,9 +30,13 @@ class Character:
 
     @staticmethod
     def validateData(data):
-        for field in Character.getRequiredAttributes():
+        errors = list()
+        required = Character.getRequiredAttributes()
+        for field in required:
             if field not in data:
-                raise ValueError(f"Falta el campo obligatorio: {field}")
+                errors.append(field)
+        if errors:
+            raise ValueError(f"Missing required values: {str(errors)}")
             
     @staticmethod
     def validateUpdateableValues(data):
@@ -43,10 +47,10 @@ class Character:
             if not key in editables:
                 errors.append(key)
 
-            if errors:
-                raise ValueError(f"Editing fields " + str(errors) + " is not allowed. Only " + str(editables) + " allowed")
+        if errors:
+            raise ValueError(f"Editing fields {str(errors)} is not allowed. Only {str(editables)} allowed")
     
-    
+
     @staticmethod
     def create(data):
         Character.validateData(data)
