@@ -4,17 +4,21 @@ from Service.CharacterService import CharacterService
 from pprint import pprint
 
 
-def create_character_blueprint(db):
-    repo = CharacterRepository(db)
+def create_character_blueprint(
+        characterRepo, 
+        createCharacter,
+        updateCharacter,
+        partialUpdateCharacter
+        ):
     bp = Blueprint("characters", __name__)
 
     @bp.get("/characters")
     def getCharacters():
-        return jsonify(repo.getCharacters())
+        return jsonify(characterRepo.getCharacters())
 
     @bp.get("/characters/<int:id>")
     def getCharacter(id):
-        character = repo.getCharacter(id)
+        character = characterRepo.getCharacter(id)
         if not character:
             return jsonify({"error": "not found"}), 404
         return jsonify(character)
@@ -22,29 +26,34 @@ def create_character_blueprint(db):
     @bp.post("/characters")
     def postCharacter():
         data = request.json
-
-        if not data or 'name' not in data:
-            return jsonify({"error": "Invalid data"}), 400
+        try:
+            character = createCharacter.do(data)
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
         
-        character = CharacterService.createCharacter(data)
-        repo.addCharacter(character)
-        return repo.getCharacter(character.id)
+        return jsonify(character)
+    
+        # character = CharacterService.createCharacter(data)
+        # repo.addCharacter(character)
+        # return repo.getCharacter(character.id)
 
     
     @bp.put("/characters/<int:id>")
     def putCharacter(id):
-        data = request.json
-
-        if not data or 'name' not in data:
-            return jsonify({"error": "Invalid data"}), 400
-               
-        character = CharacterService.createCharacter(data)
+        character = characterRepo.getCharacter(id)
         if not character:
             return jsonify({"error": "not found"}), 404
         
-        repo.updateCharacter(id, character)
-
-        return repo.getCharacter(id)
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid data"}), 400
+        
+        try:
+            character = updateCharacter.do(id, data)
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+        
+        return jsonify(character)
     
     @bp.patch("/characters/<int:id>")
     def patchCharacter(id):
@@ -53,19 +62,12 @@ def create_character_blueprint(db):
         if not data:
             return jsonify({"error": "Invalid data"}), 400
         
-        character = repo.getCharacter(id)
+        character = characterRepo.getCharacter(id)
         if not character:
             return jsonify({"error": "not found"}), 404
         
-        CharacterService.validateUpdateableValues(data)
-
-        editable = CharacterService.createCharacter(character)
-        for key, value in data.items():
-            setattr(editable, key, value)
-        editable.id = id
-
-        repo.updateCharacter(id, editable)
-        return repo.getCharacter(id)
+        updated = partialUpdateCharacter.do(character, data)
+        return jsonify(updated)
         
         
     @bp.delete("/characters/<int:id>")

@@ -1,4 +1,5 @@
 from Model.Character import Character
+from pymongo import ReturnDocument
 
 class CharacterRepository:
     db = None
@@ -17,15 +18,18 @@ class CharacterRepository:
     def addCharacter(self, character):
         id = self.__calculateNextId()
         character.id = id
-        return self.characterCollection.insert_one(
+        self.characterCollection.insert_one(
             character.__dict__ if isinstance(character, Character) else character
         )
+        return self.getCharacter(character.id)
     
     def updateCharacter(self, id, character):
         character.id = id
-        return self.characterCollection.update_one(
+        return self.characterCollection.find_one_and_update(
             {'id': id},
-            {'$set': character.__dict__ if isinstance(character, Character) else character}            
+            {'$set': character.__dict__ if isinstance(character, Character) else character},
+            projection={"_id": 0},
+            return_document=ReturnDocument.AFTER         
         )
     
     def deleteCharacter(self, id):
