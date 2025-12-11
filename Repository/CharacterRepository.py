@@ -7,19 +7,24 @@ class CharacterRepository:
     def __init__(self, db):
         self.characterCollection = db.getCollection("rick&morty", "characters")
 
-    def getCharacter(self, id):
+    def findOne(self, id):
         return self.characterCollection.find_one({'id': id}, {'_id': 0})
 
-    def getCharacters(self):
-        return list(self.characterCollection.find({}, {'_id': 0}))
-    
+    def find(self, page, limit, filter = {}):
+        skip = (page - 1) * limit
+        result = self.characterCollection.find(filter, {'_id': 0}).skip(skip).limit(limit)
+        return list(result.sort([('id', 1)]))
+
+    def count(self, filter = {}):
+        return self.characterCollection.count_documents(filter)
+
     def addCharacter(self, character):
         id = self.__calculateNextId()
         character.id = id
         self.characterCollection.insert_one(
             character.__dict__ if isinstance(character, Character) else character
         )
-        return self.getCharacter(character.id)
+        return self.findOne(character.id)
     
     def updateCharacter(self, id, character):
         if isinstance(character, Character):

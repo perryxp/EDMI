@@ -4,12 +4,15 @@ from Controller.CharacterController import create_character_blueprint
 from Repository.CharacterRepository import CharacterRepository
 from Repository.LocationRepository import LocationRepository
 from Repository.EpisodeRepository import EpisodeRepository
-from UseCase.CreateCharacter import CreateCharacter
-from UseCase.UpdateCharacter import UpdateCharacter
-from UseCase.PartialUpdateCharacter import PartialUpdateCharacter
-from UseCase.UpdateCharacterLocation import UpdateCharacterLocation
-from UseCase.AddCharacterEpisode import AddCharacterEpisode
-from UseCase.DeleteCharacterEpisode import DeleteCharacterEpisode
+from UseCase import (
+    CreateCharacter,
+    UpdateCharacter,
+    PartialUpdateCharacter,
+    UpdateCharacterLocation,
+    AddCharacterEpisode,
+    DeleteCharacterEpisode,
+    CharactersPaginator,
+)
 
 def create_app():
     app = Flask(__name__)
@@ -28,6 +31,7 @@ def create_app():
     updateCharacterLocation = UpdateCharacterLocation(characterRepository)
     addCharacterEpisode = AddCharacterEpisode(characterRepository, episodeRepository)
     deleteCharacterEpisode = DeleteCharacterEpisode(characterRepository, episodeRepository)
+    characterPaginator = CharactersPaginator(characterRepository)
     # update_character_uc = UpdateCharacterUseCase(repo)
     # registra el blueprint pasándole el repo ya configurado
     character_controller = create_character_blueprint(
@@ -39,7 +43,8 @@ def create_app():
         updateCharacterLocation,
         addCharacterEpisode,
         episodeRepository,
-        deleteCharacterEpisode
+        deleteCharacterEpisode,
+        characterPaginator,
     )
     app.register_blueprint(character_controller, url_prefix="/api/v1")
 

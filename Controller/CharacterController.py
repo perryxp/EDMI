@@ -1,31 +1,26 @@
 from flask import Blueprint, jsonify, request
-from Repository.CharacterRepository import CharacterRepository
-from Service.CharacterService import CharacterService
 from pprint import pprint
 
-
-def create_character_blueprint(
-        characterRepo, 
-        createCharacter,
-        updateCharacter,
-        partialUpdateCharacter,
-        locationRepo,
-        updateCharacterLocation,
-        addCharacterEpisode,
-        episodeRepo,
-        deleteCharacterEpisode,
-    ):
-   
+def create_character_blueprint(container):
+    characterRepo = container.get("characterRepository")   
     bp = Blueprint('characters', __name__)
 
     @bp.get('/characters')
     def getCharacters():
-        return jsonify(characterRepo.getCharacters())
-    
+        try:
+            page = int(request.args.get('page', 1))
+            limit = int(request.args.get('limit', 20))
+            if page <= 0 or limit <= 0:
+                raise Exception('Page and limit must be integers greater than 0')
+        except Exception as e:
+            return jsonify({'error': 'Page and limit must be integers greater than 0'}), 400
 
+        return jsonify(container.get('characterPaginator').paginate(int(page), int(limit)))
+
+    
     @bp.get('/characters/<int:id>')
     def getCharacter(id):
-        character = characterRepo.getCharacter(id)
+        character = characterRepo.findOne(id)
         if not character:
             return jsonify({'error': 'Not found'}), 404
         return jsonify(character)
@@ -35,7 +30,7 @@ def create_character_blueprint(
     def postCharacter():
         data = request.json
         try:
-            character = createCharacter.do(data)
+            character = container.get('createCharacter').do(data)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
@@ -48,12 +43,12 @@ def create_character_blueprint(
         if not data:
             return jsonify({'error': 'Invalid JSON data'}), 400
         
-        character = characterRepo.getCharacter(id)
+        character = characterRepo.findOne(id)
         if not character:
             return jsonify({'error': 'Not found'}), 404        
         
         try:
-            character = updateCharacter.do(id, data)
+            character = container.get('updateCharacter').do(id, data)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
@@ -66,17 +61,17 @@ def create_character_blueprint(
         if not data:
             return jsonify({'error':  'Invalid JSON data'}), 400
         
-        character = characterRepo.getCharacter(id)
+        character = characterRepo.findOne(id)
         if not character:
             return jsonify({'error': 'Not found'}), 404
         
-        updated = partialUpdateCharacter.do(character, data)
+        updated = container.get('partialUpdateCharacter').do(character, data)
         return jsonify(updated)
         
         
     @bp.delete('/characters/<int:id>')
     def deleteCharacter(id):
-        character = characterRepo.getCharacter(id)
+        character = characterRepo.findOne(id)
         if not character:
             return jsonify({'error': 'Not found'}), 404
         
@@ -92,14 +87,14 @@ def create_character_blueprint(
         if not data['id']:
             return jsonify({'error': 'Missing required value "id"'}), 400
         
-        character = characterRepo.getCharacter(id)
-        location = locationRepo.findOne(int(data['id']))
+        character = characterRepo.findOne(id)
+        location = container.get('locationRepository').findOne(int(data['id']))
 
         if not character or not location:
             return jsonify({'error': 'Not found'}), 404        
         
         try:
-            character = updateCharacterLocation.do(character, location)
+            character = container.get('updateCharacterLocation').do(character, location)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
@@ -114,14 +109,14 @@ def create_character_blueprint(
         if not data['id']:
             return jsonify({'error': 'Missing required value "id"'}), 400
         
-        character = characterRepo.getCharacter(id)
-        episode = episodeRepo.findOne(int(data['id']))
+        character = characterRepo.findOne(id)
+        episode = container.get('episodeRepository').findOne(int(data['id']))
 
         if not character or not episode:
             return jsonify({'error': 'Not found'}), 404
 
         try:
-            character = addCharacterEpisode.do(character, episode)
+            character = container.get('addCharacterEpisode').do(character, episode)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
@@ -130,12 +125,12 @@ def create_character_blueprint(
 
     @bp.delete('characters/<int:characterId>/episodes/<int:episodeId>')
     def delCharacterEpisode(characterId, episodeId):
-        character = characterRepo.getCharacter(characterId)
+        character = characterRepo.findOne(characterId)
 
         if not character or not character['episodes']:
             return jsonify({'error': 'Not found'}), 404
         try:
-            character = deleteCharacterEpisode.do(character, episodeId)
+            character = container.get('deleteCharacterEpisode').do(character, episodeId)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         return jsonify(character)
