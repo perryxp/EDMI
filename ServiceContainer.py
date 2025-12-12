@@ -12,6 +12,12 @@ from UseCase import (
     AddCharacterEpisode,
     DeleteCharacterEpisode,
     CharactersPaginator,
+    LocationsPaginator,
+    CreateLocation,
+    UpdateLocation,
+    PartialUpdateLocation,
+    AddLocationResident,
+    DeleteLocationResident,
 )
 
 class ServiceContainer:
@@ -32,7 +38,13 @@ class ServiceContainer:
             'updateCharacterLocation': lambda: UpdateCharacterLocation(self.get('characterRepository')),
             'addCharacterEpisode': lambda: AddCharacterEpisode(self.get('characterRepository'), self.get('episodeRepository')),
             'deleteCharacterEpisode': lambda: DeleteCharacterEpisode(self.get('characterRepository'), self.get('episodeRepository')),
-            'characterPaginator': lambda: CharactersPaginator(self.get('characterRepository'))
+            'characterPaginator': lambda: CharactersPaginator(self.get('characterRepository')),
+            'locationsPaginator': lambda: LocationsPaginator(self.get('locationRepository')),
+            'createLocation': lambda: CreateLocation(self.get('locationRepository')),
+            'updateLocation': lambda: UpdateLocation(self.get('locationRepository')),
+            'partialUpdateLocation': lambda: PartialUpdateLocation(self.get('locationRepository')),
+            'addLocationResident': lambda: AddLocationResident(self.get('locationRepository'), self.get('characterRepository')),
+            'deleteLocationResident': lambda: DeleteLocationResident(self.get('locationRepository'), self.get('characterRepository')),
         }
 
     def get(self, serviceName: str):

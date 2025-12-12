@@ -15,7 +15,7 @@ def create_location_blueprint(container):
         except Exception as e:
             return jsonify({'error': 'Page and limit must be integers greater than 0'}), 400
 
-        return jsonify(container.get('characterPaginator').paginate(int(page), int(limit)))
+        return jsonify(container.get('locationsPaginator').paginate(int(page), int(limit)))
 
     
     @bp.get('/locations/<int:id>')
@@ -30,7 +30,7 @@ def create_location_blueprint(container):
     def postLocation():
         data = request.json
         try:
-            location = container.get('createCharacter').do(data)
+            location = container.get('createLocation').do(data)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
@@ -48,7 +48,7 @@ def create_location_blueprint(container):
             return jsonify({'error': 'Not found'}), 404        
         
         try:
-            location = container.get('updateCharacter').do(id, data)
+            location = container.get('updateLocation').do(id, data)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
@@ -65,22 +65,22 @@ def create_location_blueprint(container):
         if not location:
             return jsonify({'error': 'Not found'}), 404
         
-        updated = container.get('partialUpdateCharacter').do(location, data)
+        updated = container.get('partialUpdateLocation').do(location, data)
         return jsonify(updated)
         
         
-    @bp.delete('/location/<int:id>')
-    def deleteCharacter(id):
-        character = locationRepo.findOne(id)
-        if not character:
+    @bp.delete('/locations/<int:id>')
+    def deleteLocation(id):
+        location = locationRepo.findOne(id)
+        if not location:
             return jsonify({'error': 'Not found'}), 404
         
-        locationRepo.deleteCharacter(id)
+        locationRepo.deleteLocation(id)
         return [], 204
     
     
-    @bp.post('locations/<int:id>/characters')
-    def postLocationCharacter(id):
+    @bp.post('locations/<int:id>/residents')
+    def postLocationResidents(id):
         data = request.json
         if not data:
             return jsonify({'error': 'Invalid JSON data'}), 400
@@ -88,27 +88,27 @@ def create_location_blueprint(container):
             return jsonify({'error': 'Missing required value "id"'}), 400
         
         location = locationRepo.findOne(id)
-        character = container.get('episodeRepository').findOne(int(data['id']))
+        resident = container.get('characterRepository').findOne(int(data['id']))
 
-        if not location or not character:
+        if not location or not resident:
             return jsonify({'error': 'Not found'}), 404
 
         try:
-            location = container.get('addCharacterEpisode').do(location, character)
+            location = container.get('addLocationResident').do(location, resident)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
         return location
     
 
-    @bp.delete('locations/<int:locationId>/character/<int:characterId>')
-    def delCharacterEpisode(locationId, characterId):
+    @bp.delete('locations/<int:locationId>/residents/<int:characterId>')
+    def delLocationResident(locationId, characterId):
         location = locationRepo.findOne(locationId)
 
-        if not location or not location['episodes']:
+        if not location or not location['residents']:
             return jsonify({'error': 'Not found'}), 404
         try:
-            location = container.get('deleteCharacterEpisode').do(location, characterId)
+            location = container.get('deleteLocationResident').do(location, characterId)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         return jsonify(location)
