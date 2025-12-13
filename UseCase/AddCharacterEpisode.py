@@ -11,10 +11,10 @@ class AddCharacterEpisode:
         self.characterRepo = characterRepo
         self.episodeRepo = episodeRepo
 
-    def do(self, character, episode):
+    def do(self, character, episode, session = None):
         data = {'id': episode['id'], 'name': episode['name'], 'episode': episode['episode']}
         if 'episodes' not in character:
             character['episodes'] = []
         if data not in character['episodes']:
             character['episodes'].append(data)
-        return self.characterRepo.updateCharacter(character['id'], character)
+        return self.characterRepo.updateCharacter(character['id'], character, session)

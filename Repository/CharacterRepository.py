@@ -18,7 +18,7 @@ class CharacterRepository:
     def count(self, filter = {}):
         return self.characterCollection.count_documents(filter)
 
-    def addCharacter(self, character):
+    def addCharacter(self, character, session = None):
         id = self.__calculateNextId()
         character.id = id
         self.characterCollection.insert_one(
@@ -26,7 +26,7 @@ class CharacterRepository:
         )
         return self.findOne(character.id)
     
-    def updateCharacter(self, id, character):
+    def updateCharacter(self, id, character, session = None):
         if isinstance(character, Character):
             character.id = id
         else:
@@ -34,11 +34,12 @@ class CharacterRepository:
         return self.characterCollection.find_one_and_update(
             {'id': id},
             {'$set': character.__dict__ if isinstance(character, Character) else character},
+            session = session,
             projection={"_id": 0},
             return_document=ReturnDocument.AFTER         
         )
     
-    def deleteCharacter(self, id):
+    def deleteCharacter(self, id, session = None):
         return self.characterCollection.delete_one({'id': id})
     
     def __calculateNextId(self):

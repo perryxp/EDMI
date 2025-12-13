@@ -18,6 +18,12 @@ from UseCase import (
     PartialUpdateLocation,
     AddLocationResident,
     DeleteLocationResident,
+    EpisodesPaginator,
+    CreateEpisode,
+    UpdateEpisode,
+    PartialUpdateEpisode,
+    AddEpisodeCharacter,
+    DeleteEpisodeCharacter,
 )
 
 class ServiceContainer:
@@ -45,6 +51,22 @@ class ServiceContainer:
             'partialUpdateLocation': lambda: PartialUpdateLocation(self.get('locationRepository')),
             'addLocationResident': lambda: AddLocationResident(self.get('locationRepository'), self.get('characterRepository')),
             'deleteLocationResident': lambda: DeleteLocationResident(self.get('locationRepository'), self.get('characterRepository')),
+            'episodesPaginator': lambda: EpisodesPaginator(self.get('episodeRepository')),
+            'createEpisode': lambda: CreateEpisode(self.get('episodeRepository')),
+            'updateEpisode': lambda: UpdateEpisode(self.get('episodeRepository')),
+            'partialUpdateEpisode': lambda: PartialUpdateEpisode(self.get('episodeRepository')),
+            'addEpisodeCharacter': lambda: AddEpisodeCharacter(
+                self.get('episodeRepository'),
+                self.get('characterRepository'),
+                self.get('addCharacterEpisode'),
+                self.db
+            ),
+            'deleteEpisodeCharacter': lambda: DeleteEpisodeCharacter(
+                self.get('episodeRepository'),
+                self.get('characterRepository'),
+                self.get('deleteCharacterEpisode'),
+                self.db
+            ),
         }
 
     def get(self, serviceName: str):

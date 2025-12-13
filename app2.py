@@ -2,6 +2,7 @@ from flask import Flask
 from extensions import init_extensions
 from Controller.CharacterController import create_character_blueprint
 from Controller.LocationController import create_location_blueprint
+from Controller.EpisodeController import create_episode_blueprint
 from ServiceContainer import ServiceContainer
 
 def create_app():
@@ -11,8 +12,10 @@ def create_app():
     container = ServiceContainer(db)
     characterController = create_character_blueprint(container)
     locationController = create_location_blueprint(container)
+    episodeController = create_episode_blueprint(container)
     app.register_blueprint(characterController, url_prefix= '/api/v1')
     app.register_blueprint(locationController, url_prefix= '/api/v1')
+    app.register_blueprint(episodeController, url_prefix= '/api/v1')
 
     return app
 

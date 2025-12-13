@@ -1,4 +1,4 @@
-from Model.Character import Character
+from Model.Episode import Episode
 from pymongo import ReturnDocument
 
 class EpisodeRepository:
@@ -10,30 +10,40 @@ class EpisodeRepository:
     def findOne(self, id):
         return self.episodeCollection.find_one({'id': id}, {'_id': 0})
 
-    def findAll(self):
-        return list(self.episodeCollection.find({}, {'_id': 0}))
+    def find(self, page, limit, filter = {}):
+        skip = (page - 1) * limit
+        result = self.episodeCollection.find(filter, {'_id': 0}).skip(skip).limit(limit)
+        return list(result.sort([('id', 1)]))
     
-    # def addCharacter(self, character):
-    #     id = self.__calculateNextId()
-    #     character.id = id
-    #     self.characterCollection.insert_one(
-    #         character.__dict__ if isinstance(character, Character) else character
-    #     )
-    #     return self.getCharacter(character.id)
+    def count(self, filter = {}):
+        return self.episodeCollection.count_documents(filter)
     
-    # def updateCharacter(self, id, character):
-    #     character.id = id
-    #     return self.characterCollection.find_one_and_update(
-    #         {'id': id},
-    #         {'$set': character.__dict__ if isinstance(character, Character) else character},
-    #         projection={"_id": 0},
-    #         return_document=ReturnDocument.AFTER         
-    #     )
+    def addEpisode(self, episode, session = None):
+        id = self.__calculateNextId()
+        episode.id = id
+        self.episodeCollection.insert_one(
+            episode.__dict__ if isinstance(episode, Episode) else episode
+        )
+        return self.findOne(episode.id)
     
-    # def deleteCharacter(self, id):
-    #     return self.characterCollection.delete_one({'id': id})
+    def updateEpisode(self, id, episode, session = None):
+
+        if isinstance(episode, Episode):
+            episode.id = id
+        else:
+            episode['id'] = id
+        return self.episodeCollection.find_one_and_update(
+            {'id': id},
+            {'$set': episode.__dict__ if isinstance(episode, Episode) else episode},
+            session = session,
+            projection={"_id": 0},
+            return_document=ReturnDocument.AFTER         
+        )
     
-    # def __calculateNextId(self):
-    #     result = self.characterCollection.find_one({}, {'id': 1, '_id': 0},sort=[('id', -1)])
+    def deleteEpisode(self, id, session = None):
+        return self.episodeCollection.delete_one({'id': id})
+    
+    def __calculateNextId(self):
+        result = self.episodeCollection.find_one({}, {'id': 1, '_id': 0},sort=[('id', -1)])
         
-    #     return (result['id'] + 1) if result else 1
+        return (result['id'] + 1) if result else 1
