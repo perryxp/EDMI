@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from Exception.NotFoundException import NotFoundException
+from Exception.ConflictException import ConflictException
 from pprint import pprint
 
 def create_episode_blueprint(container):
@@ -64,11 +65,12 @@ def create_episode_blueprint(container):
         
     @bp.delete('/episodes/<int:id>')
     def deleteEpisode(id):
-        episode = episodeRepo.findOne(id)
-        if not episode:
-            return jsonify({'error': 'Not found'}), 404
-        
-        episodeRepo.deleteEpisode(id)
+        try:
+            container.get('deleteEpisode').do(id)
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
+        except ConflictException as e:
+            return jsonify({'error': str(e)}), 409
         return [], 204
      
     @bp.post('episodes/<int:episodeId>/characters')

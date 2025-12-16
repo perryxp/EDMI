@@ -8,6 +8,7 @@ from .Location.LocationsPaginator import LocationsPaginator
 from .Location.CreateLocation import CreateLocation
 from .Location.UpdateLocation import UpdateLocation
 from .Location.PartialUpdateLocation import PartialUpdateLocation
+from .Location.DeleteLocation import DeleteLocation
 from .Location.AddLocationResident import AddLocationResident
 from .Location.DeleteLocationResident import DeleteLocationResident
 from .Episode.EpisodesPaginator import EpisodesPaginator
@@ -29,6 +30,7 @@ __all__ = [
     'CreateLocation',
     'UpdateLocation',
     'PartialUpdateLocation',
+    'DeleteLocation',
     'AddLocationResident',
     'DeleteLocationResident',
     'EpisodesPaginator',

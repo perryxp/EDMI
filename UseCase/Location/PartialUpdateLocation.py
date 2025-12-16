@@ -1,20 +1,22 @@
 from Model.Location import Location
+from Exception.NotFoundException import NotFoundException
 from pprint import pprint
 
 
 class PartialUpdateLocation:
 
-    locateRepo = None
+    locationRepo = None
 
     def __init__(self, repository):
-        self.locateRepo = repository
+        self.locationRepo = repository
 
-    def do(self, location, data):
+    def do(self, locationId, data):
+        location = self.locationRepo.findOne(locationId)
+        if not location:
+            raise NotFoundException
         Location.validateUpdateableValues(data)
 
-        updateable = Location.create(location)
         for key, value in data.items():
-            setattr(updateable, key, value)
-        updateable.id = location['id']
+            location[key] = value
 
-        return self.locateRepo.updateLocation(location['id'], updateable)
+        return self.locationRepo.updateLocation(location)

@@ -1,4 +1,5 @@
 from Model.Location import Location
+from Exception.NotFoundException import NotFoundException
 from pprint import pprint
 
 
@@ -10,5 +11,9 @@ class UpdateLocation:
         self.locationRepo = repository
 
     def do(self, id, data):
+        location = self.locationRepo.findOne(id)
+        if not location:
+            raise NotFoundException
         location = Location.create(data)
-        return self.locationRepo.updateLocation(id, location)
+        location['id'] = id
+        return self.locationRepo.updateLocation(location)

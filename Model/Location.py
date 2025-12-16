@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from typing import List
 from dataclasses import fields
@@ -8,7 +8,7 @@ class Location:
     name: str
     type: str
     dimension: str
-    residents: List
+    residents: List[dict] = field(default_factory = list)
     # url: str
     created: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -51,14 +51,14 @@ class Location:
     @staticmethod
     def create(data):
         Location.validateData(data)
-        return Location(
-            # id = data['id'],
+        location = Location(
             name = data['name'],
             type = data['type'],
             dimension = data['dimension'],
             residents = data.get('residents', [])
             # url = data.get('url', '')            
         )
+        return asdict(location)
     
     @staticmethod
     def getReferenceData(location):

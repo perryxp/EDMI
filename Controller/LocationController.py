@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+from Exception.NotFoundException import NotFoundException
+from Exception.ConflictException import ConflictException
 from pprint import pprint
 
 def create_location_blueprint(container):
@@ -42,15 +44,12 @@ def create_location_blueprint(container):
         data = request.json
         if not data:
             return jsonify({'error': 'Invalid JSON data'}), 400
-        
-        location = locationRepo.findOne(id)
-        if not location:
-            return jsonify({'error': 'Not found'}), 404        
-        
         try:
             location = container.get('updateLocation').do(id, data)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
         
         return jsonify(location)
     
@@ -60,22 +59,23 @@ def create_location_blueprint(container):
 
         if not data:
             return jsonify({'error':  'Invalid JSON data'}), 400
-        
-        location = locationRepo.findOne(id)
-        if not location:
-            return jsonify({'error': 'Not found'}), 404
-        
-        updated = container.get('partialUpdateLocation').do(location, data)
-        return jsonify(updated)
+        try:
+            location = container.get('partialUpdateLocation').do(id, data)
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
+        return jsonify(location)
         
         
     @bp.delete('/locations/<int:id>')
     def deleteLocation(id):
-        location = locationRepo.findOne(id)
-        if not location:
-            return jsonify({'error': 'Not found'}), 404
-        
-        locationRepo.deleteLocation(id)
+        try:
+            container.get('deleteLocation').do(id)
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
+        except ConflictException as e:
+            return jsonify({'error': str(e)}), 409
         return [], 204
     
     
@@ -85,19 +85,13 @@ def create_location_blueprint(container):
         if not data:
             return jsonify({'error': 'Invalid JSON data'}), 400
         if not data['id']:
-            return jsonify({'error': 'Missing required value "id"'}), 400
-        
-        location = locationRepo.findOne(id)
-        resident = container.get('characterRepository').findOne(int(data['id']))
-
-        if not location or not resident:
-            return jsonify({'error': 'Not found'}), 404
-
+            return jsonify({'error': 'Missing required value "id"'}), 400   
         try:
-            location = container.get('addLocationResident').do(location, resident)
+            location = container.get('addLocationResident').do(id, int(data['id']))
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
-        
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
         return location
     
 
