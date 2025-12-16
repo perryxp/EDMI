@@ -1,17 +1,18 @@
 from Exception.NotFoundException import NotFoundException
-class DeleteEpisodeCharacter:
+
+class DeleteEpisodeLocation:
 
     episodeRepo = None
 
     def __init__(self, episodeRepo):
         self.episodeRepo = episodeRepo
 
-    def do(self, episodeId, characterId):
+    def do(self, episodeId, locationId):
         episode = self.episodeRepo.findOne(episodeId)
         if not episode:
             raise NotFoundException()
-        for i, characterInfo in enumerate(episode['characters']):
-            if characterInfo['id'] == characterId:
-                del episode['characters'][i]
+        for i, locationInfo in enumerate(episode['locations']):
+            if locationInfo['id'] == locationId:
+                del episode['locations'][i]
                 break
         return self.episodeRepo.updateEpisode(episode)

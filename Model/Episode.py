@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone, date
 from typing import List
 from dataclasses import fields
@@ -8,7 +8,8 @@ class Episode:
     name: str
     air_date: date
     episode: str
-    characters: List
+    characters: List[dict] = field(default_factory = list)
+    locations: List[dict] = field(default_factory = list)
     # url: str
     created: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -51,13 +52,14 @@ class Episode:
     @staticmethod
     def create(data):
         Episode.validateData(data)
-        return Episode(
+        episode = Episode(
             name = data['name'],
             air_date = data['air_date'],
             episode = data['episode'],
             characters = data.get('characters', [])
             # url = data.get('url', '')            
         )
+        return asdict(episode)
     
     @staticmethod
     def getReferenceData(episode):

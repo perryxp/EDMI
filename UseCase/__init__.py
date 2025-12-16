@@ -14,8 +14,10 @@ from .Episode.EpisodesPaginator import EpisodesPaginator
 from .Episode.CreateEpisode import CreateEpisode
 from .Episode.UpdateEpisode import UpdateEpisode
 from .Episode.PartialUpdateEpisode import PartialUpdateEpisode
-from .Shared.AddEpisodeCharacter import AddEpisodeCharacter
-from .Shared.DeleteEpisodeCharacter import DeleteEpisodeCharacter
+from .Episode.AddEpisodeLocation import AddEpisodeLocation
+from .Episode.DeleteEpisodeLocation import DeleteEpisodeLocation
+from .Episode.AddEpisodeCharacter import AddEpisodeCharacter
+from .Episode.DeleteEpisodeCharacter import DeleteEpisodeCharacter
 
 __all__ = [
     'CreateCharacter',
@@ -34,6 +36,8 @@ __all__ = [
     'UpdateEpisode',
     'PartialUpdateEpisode',
     'AddEpisodeCharacter',
+    'AddEpisodeLocation',
+    'DeleteEpisodeLocation',
     'DeleteEpisodeCharacter',
     'DeleteCharacter',
 ]

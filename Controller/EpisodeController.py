@@ -40,31 +40,26 @@ def create_episode_blueprint(container):
         data = request.json
         if not data:
             return jsonify({'error': 'Invalid JSON data'}), 400
-        
-        episode = episodeRepo.findOne(id)
-        if not episode:
-            return jsonify({'error': 'Not found'}), 404        
-        
         try:
             episode = container.get('updateEpisode').do(id, data)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
-        
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
         return jsonify(episode)
     
     @bp.patch('/episodes/<int:id>')
     def patchEpisode(id):
         data = request.json
-
         if not data:
             return jsonify({'error':  'Invalid JSON data'}), 400
-        
-        episode = episodeRepo.findOne(id)
-        if not episode:
-            return jsonify({'error': 'Not found'}), 404
-        
-        updated = container.get('partialUpdateEpisode').do(episode, data)
-        return jsonify(updated)
+        try:
+            episode = container.get('partialUpdateEpisode').do(id, data)
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
+        return jsonify(episode)
         
         
     @bp.delete('/episodes/<int:id>')
@@ -85,7 +80,7 @@ def create_episode_blueprint(container):
             return jsonify({'error': 'Missing required value "id"'}), 400
 
         try:
-            episode = container.get('addEpisodeCharacter').do(episodeId, int(characterData['id']))['episode']
+            episode = container.get('addEpisodeCharacter').do(episodeId, int(characterData['id']))
         except NotFoundException as e:
             return jsonify({'error': str(e)}), 404
         
@@ -94,10 +89,33 @@ def create_episode_blueprint(container):
     @bp.delete('episodes/<int:episodeId>/characters/<int:characterId>')
     def delEpisodeCharacter(episodeId, characterId):
         try:
-            character = container.get('deleteEpisodeCharacter').do(episodeId, characterId)['episode']
+            character = container.get('deleteEpisodeCharacter').do(episodeId, characterId)
         except NotFoundException as e:
             return jsonify({'error': str(e)}), 404
         return jsonify(character)
+    
+    @bp.post('episodes/<int:episodeId>/locations')
+    def postEpisodeLocations(episodeId):
+        locationData = request.json
+        if not locationData:
+            return jsonify({'error': 'Invalid JSON data'}), 400
+        if not locationData['id']:
+            return jsonify({'error': 'Missing required value "id"'}), 400
+
+        try:
+            episode = container.get('addEpisodeLocation').do(episodeId, int(locationData['id']))
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
+        
+        return episode
+    
+    @bp.delete('episodes/<int:episodeId>/locations/<int:locationId>')
+    def delEpisodeLocation(episodeId, locationId):
+        try:
+            episode = container.get('deleteEpisodeLocation').do(episodeId, locationId)
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
+        return jsonify(episode)
     
 
     @bp.errorhandler(Exception)

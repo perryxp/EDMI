@@ -21,6 +21,8 @@ from UseCase import (
     UpdateEpisode,
     PartialUpdateEpisode,
     AddEpisodeCharacter,
+    AddEpisodeLocation,
+    DeleteEpisodeLocation,
     DeleteEpisodeCharacter,
     DeleteCharacter,
 )
@@ -66,15 +68,17 @@ class ServiceContainer:
             'createEpisode': lambda: CreateEpisode(self.get('episodeRepository')),
             'updateEpisode': lambda: UpdateEpisode(self.get('episodeRepository')),
             'partialUpdateEpisode': lambda: PartialUpdateEpisode(self.get('episodeRepository')),
+            'addEpisodeLocation': lambda: AddEpisodeLocation(
+                self.get('episodeRepository'),
+                self.get('locationRepository'),
+            ),
+            'deleteEpisodeLocation': lambda: DeleteEpisodeLocation(self.get('episodeRepository')),
             'addEpisodeCharacter': lambda: AddEpisodeCharacter(
                 self.get('episodeRepository'),
                 self.get('characterRepository'),
-                self.db
             ),
             'deleteEpisodeCharacter': lambda: DeleteEpisodeCharacter(
                 self.get('episodeRepository'),
-                self.get('characterRepository'),
-                self.db
             ),
         }
 

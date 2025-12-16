@@ -1,4 +1,5 @@
 from Model.Episode import Episode
+from Exception.NotFoundException import NotFoundException
 from pprint import pprint
 
 
@@ -9,12 +10,14 @@ class PartialUpdateEpisode:
     def __init__(self, repository):
         self.episodeRepo = repository
 
-    def do(self, episode, data):
+    def do(self, id, data):
+        episode = self.episodeRepo.findOne(id)
+        if not episode:
+            raise NotFoundException()
+        
         Episode.validateUpdateableValues(data)
 
-        updateable = Episode.create(episode)
         for key, value in data.items():
-            setattr(updateable, key, value)
-        updateable.id = episode['id']
+            episode[key] = value
 
-        return self.episodeRepo.updateEpisode(episode['id'], updateable)
+        return self.episodeRepo.updateEpisode(episode)

@@ -20,21 +20,14 @@ class EpisodeRepository:
     
     def addEpisode(self, episode, session = None):
         id = self.__calculateNextId()
-        episode.id = id
-        self.episodeCollection.insert_one(
-            episode.__dict__ if isinstance(episode, Episode) else episode
-        )
-        return self.findOne(episode.id)
+        episode['id'] = id
+        self.episodeCollection.insert_one(episode)
+        return self.findOne(episode['id'])
     
-    def updateEpisode(self, id, episode, session = None):
-
-        if isinstance(episode, Episode):
-            episode.id = id
-        else:
-            episode['id'] = id
+    def updateEpisode(self, episode, session = None):
         return self.episodeCollection.find_one_and_update(
-            {'id': id},
-            {'$set': episode.__dict__ if isinstance(episode, Episode) else episode},
+            {'id': episode['id']},
+            {'$set': episode},
             session = session,
             projection={"_id": 0},
             return_document=ReturnDocument.AFTER         
