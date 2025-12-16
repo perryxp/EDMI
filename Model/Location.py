@@ -20,6 +20,10 @@ class Location:
     @staticmethod
     def getEditableAttributes():
         return ['name', 'type', 'dimension']
+    
+    @staticmethod
+    def getReferenceAttributes():
+        return ['id', 'name']
 
     @staticmethod
     def validateData(data):
@@ -55,3 +59,8 @@ class Location:
             residents = data.get('residents', [])
             # url = data.get('url', '')            
         )
+    
+    @staticmethod
+    def getReferenceData(location):
+        fields = Location.getReferenceAttributes()
+        return {field: location[field] for field in fields}

@@ -20,6 +20,10 @@ class Episode:
     @staticmethod
     def getEditableAttributes():
         return ['name', 'air_date', 'episode']
+    
+    @staticmethod
+    def getReferenceAttributes():
+        return ['id', 'name', 'episode']
 
     @staticmethod
     def validateData(data):
@@ -48,10 +52,14 @@ class Episode:
     def create(data):
         Episode.validateData(data)
         return Episode(
-            # id = data['id'],
             name = data['name'],
             air_date = data['air_date'],
             episode = data['episode'],
             characters = data.get('characters', [])
             # url = data.get('url', '')            
         )
+    
+    @staticmethod
+    def getReferenceData(episode):
+        fields = Episode.getReferenceAttributes()
+        return {field: episode[field] for field in fields}

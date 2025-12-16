@@ -9,8 +9,6 @@ from UseCase import (
     UpdateCharacter,
     PartialUpdateCharacter,
     UpdateCharacterLocation,
-    AddCharacterEpisode,
-    DeleteCharacterEpisode,
     CharactersPaginator,
     LocationsPaginator,
     CreateLocation,
@@ -24,6 +22,7 @@ from UseCase import (
     PartialUpdateEpisode,
     AddEpisodeCharacter,
     DeleteEpisodeCharacter,
+    DeleteCharacter,
 )
 
 class ServiceContainer:
@@ -38,12 +37,24 @@ class ServiceContainer:
             'episodeRepository': lambda: EpisodeRepository(self.db),
 
             # Casos de uso
-            'createCharacter': lambda: CreateCharacter(self.get('characterRepository')),
-            'updateCharacter': lambda: UpdateCharacter(self.get('characterRepository')),
+            'createCharacter': lambda: CreateCharacter(
+                self.get('characterRepository'),
+                self.get('locationRepository')
+            ),
+            'updateCharacter': lambda: UpdateCharacter(
+                self.get('characterRepository'),
+                self.get('locationRepository'),
+            ),
             'partialUpdateCharacter': lambda: PartialUpdateCharacter(self.get('characterRepository')),
-            'updateCharacterLocation': lambda: UpdateCharacterLocation(self.get('characterRepository')),
-            'addCharacterEpisode': lambda: AddCharacterEpisode(self.get('characterRepository'), self.get('episodeRepository')),
-            'deleteCharacterEpisode': lambda: DeleteCharacterEpisode(self.get('characterRepository'), self.get('episodeRepository')),
+            'updateCharacterLocation': lambda: UpdateCharacterLocation(
+                self.get('characterRepository'),
+                self.get('locationRepository')
+            ),
+            'deleteCharacter': lambda: DeleteCharacter(
+                self.get('characterRepository'),
+                self.get('locationRepository'),
+                self.db,
+            ),
             'characterPaginator': lambda: CharactersPaginator(self.get('characterRepository')),
             'locationsPaginator': lambda: LocationsPaginator(self.get('locationRepository')),
             'createLocation': lambda: CreateLocation(self.get('locationRepository')),
@@ -58,13 +69,11 @@ class ServiceContainer:
             'addEpisodeCharacter': lambda: AddEpisodeCharacter(
                 self.get('episodeRepository'),
                 self.get('characterRepository'),
-                self.get('addCharacterEpisode'),
                 self.db
             ),
             'deleteEpisodeCharacter': lambda: DeleteEpisodeCharacter(
                 self.get('episodeRepository'),
                 self.get('characterRepository'),
-                self.get('deleteCharacterEpisode'),
                 self.db
             ),
         }

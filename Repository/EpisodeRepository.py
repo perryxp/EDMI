@@ -41,7 +41,7 @@ class EpisodeRepository:
         )
     
     def deleteEpisode(self, id, session = None):
-        return self.episodeCollection.delete_one({'id': id})
+        return self.episodeCollection.delete_one({'id': id}, session = session)
     
     def __calculateNextId(self):
         result = self.episodeCollection.find_one({}, {'id': 1, '_id': 0},sort=[('id', -1)])

@@ -26,7 +26,7 @@ class LocationRepository:
         )
         return self.findOne(location.id)
     
-    def updateLocation(self, id, location):
+    def updateLocation(self, id, location, session = None):
 
         if isinstance(location, Location):
             location.id = id
@@ -35,6 +35,7 @@ class LocationRepository:
         return self.locationCollection.find_one_and_update(
             {'id': id},
             {'$set': location.__dict__ if isinstance(location, Location) else location},
+            session = session,
             projection={"_id": 0},
             return_document=ReturnDocument.AFTER         
         )

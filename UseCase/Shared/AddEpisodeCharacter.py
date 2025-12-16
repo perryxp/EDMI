@@ -29,12 +29,12 @@ class AddEpisodeCharacter:
             character['episodes'] = []
         if not episodeData in character['episodes']:
             character['episodes'].append(episodeData)
-        return self.characterRepo.updateCharacter(character['id'], character, session)
+        return self.characterRepo.updateCharacter(character, session)
 
         
-    def do(self, episodeId, data):
+    def do(self, episodeId, characterId):
         episode = self.episodeRepo.findOne(episodeId)
-        character = self.characterRepo.findOne(int(data['id']))
+        character = self.characterRepo.findOne(characterId)
 
         if not episode or not character:
             raise NotFoundException()
@@ -43,5 +43,5 @@ class AddEpisodeCharacter:
             episode = self.__addCharacterToEpisode(episode, character, session)
             character = self.__addEpisodeToCharacter(character, episode, session)
         
-        return episode
+        return {'episode': episode, 'character': character}
 

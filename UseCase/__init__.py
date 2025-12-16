@@ -1,10 +1,9 @@
-from .CreateCharacter import CreateCharacter
-from .UpdateCharacter import UpdateCharacter
-from .PartialUpdateCharacter import PartialUpdateCharacter
-from .UpdateCharacterLocation import UpdateCharacterLocation
-from .AddCharacterEpisode import AddCharacterEpisode
-from .DeleteCharacterEpisode import DeleteCharacterEpisode
-from .CharactersPaginator import CharactersPaginator
+from .Character.CreateCharacter import CreateCharacter
+from .Character.UpdateCharacter import UpdateCharacter
+from .Character.PartialUpdateCharacter import PartialUpdateCharacter
+from .Character.UpdateCharacterLocation import UpdateCharacterLocation
+from .Character.CharactersPaginator import CharactersPaginator
+from .Character.DeleteCharacter import DeleteCharacter
 from .Location.LocationsPaginator import LocationsPaginator
 from .Location.CreateLocation import CreateLocation
 from .Location.UpdateLocation import UpdateLocation
@@ -15,16 +14,14 @@ from .Episode.EpisodesPaginator import EpisodesPaginator
 from .Episode.CreateEpisode import CreateEpisode
 from .Episode.UpdateEpisode import UpdateEpisode
 from .Episode.PartialUpdateEpisode import PartialUpdateEpisode
-from .Episode.AddEpisodeCharacter import AddEpisodeCharacter
-from .Episode.DeleteEpisodeCharacter import DeleteEpisodeCharacter
+from .Shared.AddEpisodeCharacter import AddEpisodeCharacter
+from .Shared.DeleteEpisodeCharacter import DeleteEpisodeCharacter
 
 __all__ = [
     'CreateCharacter',
     'UpdateCharacter',
     'PartialUpdateCharacter',
     'UpdateCharacterLocation',
-    'AddCharacterEpisode',
-    'DeleteCharacterEpisode',
     'CharactersPaginator',
     'LocationsPaginator',
     'CreateLocation',
@@ -38,4 +35,5 @@ __all__ = [
     'PartialUpdateEpisode',
     'AddEpisodeCharacter',
     'DeleteEpisodeCharacter',
+    'DeleteCharacter',
 ]

@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from typing import List
 from dataclasses import fields
@@ -6,18 +6,16 @@ from dataclasses import fields
 
 @dataclass
 class Character:
-    # id: int
     name: str
     status: str
     species: str
-    type: str
+    character_type: str
     gender: str
-    origin_name: str
-    location_name: str
-    episode_ids: List[int] = field(default_factory=list)
-    image: str = ""
+    origin: dict
+    location: dict
+    episodes: List[dict] = field(default_factory = list)
+    image: str = ''
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    rating: float = 0.0
     created_by_user: bool = True
 
     @staticmethod
@@ -26,7 +24,11 @@ class Character:
 
     @staticmethod
     def getEditableAttributes():
-        return ['name', 'status', 'species', 'gender', 'image', 'rating']
+        return ['name', 'status', 'species', 'gender', 'image']
+    
+    @staticmethod
+    def getReferenceAttributes():
+        return ['id', 'name']
 
     @staticmethod
     def validateData(data):
@@ -36,7 +38,7 @@ class Character:
             if field not in data:
                 errors.append(field)
         if errors:
-            raise ValueError(f"Missing required values: {str(errors)}")
+            raise ValueError(f'Missing required values: {str(errors)}')
             
     @staticmethod
     def validateUpdateableValues(data):
@@ -48,21 +50,30 @@ class Character:
                 errors.append(key)
 
         if errors:
-            raise ValueError(f"Editing fields {str(errors)} is not allowed. Only {str(editables)} allowed")
+            raise ValueError(f'Editing fields {str(errors)} is not allowed. Only {str(editables)} allowed')
     
 
     @staticmethod
     def create(data):
         Character.validateData(data)
-        return Character(
-            # id = data["id"],
-            name = data["name"],
-            status = data.get("status", "unknown"),
-            species = data.get("species", ""),
-            type = data.get("type", ""),
-            gender = data.get("gender", ""),
-            origin_name = data.get("origin", {}).get("name", ""),
-            location_name = data.get("location", {}).get("name", ""),
-            # episode_ids = _extract_episode_ids(data.get("episode", [])),
-            # image = data.get("image", "")
+        character = Character(
+            name = data['name'],
+            status = data.get('status', 'unknown'),
+            species = data.get('species', 'unknown'),
+            character_type = data.get('character_type', 'unknown'),
+            gender = data.get('gender', 'unknown'),
+            origin = data.get('origin', 'unknown'),
+            location = data.get('location', 'unknown'),
+            episodes = data.get('episodes', []),
+            image = data.get('image', '')
         )
+
+        return asdict(character)
+    
+    
+    @staticmethod
+    def getReferenceData(character):
+        fields = Character.getReferenceAttributes()
+        return {field: character[field] for field in fields}
+
+        

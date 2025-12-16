@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from Exception.NotFoundException import NotFoundException
 from pprint import pprint
 
 def create_episode_blueprint(container):
@@ -75,38 +76,28 @@ def create_episode_blueprint(container):
         episodeRepo.deleteEpisode(id)
         return [], 204
      
-    @bp.post('episodes/<int:id>/characters')
-    def postEpisodeCharacter(id):
-        data = request.json
-        if not data:
+    @bp.post('episodes/<int:episodeId>/characters')
+    def postEpisodeCharacter(episodeId):
+        characterData = request.json
+        if not characterData:
             return jsonify({'error': 'Invalid JSON data'}), 400
-        if not data['id']:
+        if not characterData['id']:
             return jsonify({'error': 'Missing required value "id"'}), 400
-        
-        episode = episodeRepo.findOne(id)
-        character = container.get('characterRepository').findOne(int(data['id']))
-
-        if not episode or not character:
-            return jsonify({'error': 'Not found'}), 404
 
         try:
-            episode = container.get('addEpisodeCharacter').do(episode, character)
-        except ValueError as e:
-            return jsonify({'error': str(e)}), 400
+            episode = container.get('addEpisodeCharacter').do(episodeId, int(characterData['id']))['episode']
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
         
         return episode
     
     @bp.delete('episodes/<int:episodeId>/characters/<int:characterId>')
     def delEpisodeCharacter(episodeId, characterId):
-        episode = episodeRepo.findOne(episodeId)
-
-        if not episode or not episode['characters']:
-            return jsonify({'error': 'Not found'}), 404
         try:
-            episode = container.get('deleteEpisodeCharacter').do(episode, characterId)
-        except ValueError as e:
-            return jsonify({'error': str(e)}), 400
-        return jsonify(episode)
+            character = container.get('deleteEpisodeCharacter').do(episodeId, characterId)['episode']
+        except NotFoundException as e:
+            return jsonify({'error': str(e)}), 404
+        return jsonify(character)
     
 
     @bp.errorhandler(Exception)
