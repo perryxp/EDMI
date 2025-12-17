@@ -23,5 +23,8 @@ class AddEpisodeLocation:
             episode['locations'] = []
         if not data in episode['locations']:
             episode['locations'].append(data)
-        return self.episodeRepo.updateEpisode(episode)
+        return {
+            'episode': self.episodeRepo.updateEpisode(episode), 
+            'location': self.locationRepo.findOne(locationId)
+        }
 

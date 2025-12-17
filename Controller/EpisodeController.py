@@ -82,7 +82,7 @@ def create_episode_blueprint(container):
             return jsonify({'error': 'Missing required value "id"'}), 400
 
         try:
-            episode = container.get('addEpisodeCharacter').do(episodeId, int(characterData['id']))
+            episode = container.get('addEpisodeCharacter').do(episodeId, int(characterData['id']))['episode']
         except NotFoundException as e:
             return jsonify({'error': str(e)}), 404
         
@@ -91,7 +91,7 @@ def create_episode_blueprint(container):
     @bp.delete('episodes/<int:episodeId>/characters/<int:characterId>')
     def delEpisodeCharacter(episodeId, characterId):
         try:
-            character = container.get('deleteEpisodeCharacter').do(episodeId, characterId)
+            character = container.get('deleteEpisodeCharacter').do(episodeId, characterId)['episode']
         except NotFoundException as e:
             return jsonify({'error': str(e)}), 404
         return jsonify(character)
@@ -105,7 +105,7 @@ def create_episode_blueprint(container):
             return jsonify({'error': 'Missing required value "id"'}), 400
 
         try:
-            episode = container.get('addEpisodeLocation').do(episodeId, int(locationData['id']))
+            episode = container.get('addEpisodeLocation').do(episodeId, int(locationData['id']))['episode']
         except NotFoundException as e:
             return jsonify({'error': str(e)}), 404
         
@@ -114,7 +114,7 @@ def create_episode_blueprint(container):
     @bp.delete('episodes/<int:episodeId>/locations/<int:locationId>')
     def delEpisodeLocation(episodeId, locationId):
         try:
-            episode = container.get('deleteEpisodeLocation').do(episodeId, locationId)
+            episode = container.get('deleteEpisodeLocation').do(episodeId, locationId)['episode']
         except NotFoundException as e:
             return jsonify({'error': str(e)}), 404
         return jsonify(episode)

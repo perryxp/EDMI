@@ -79,35 +79,6 @@ def create_location_blueprint(container):
         return [], 204
     
     
-    @bp.post('locations/<int:id>/residents')
-    def postLocationResidents(id):
-        data = request.json
-        if not data:
-            return jsonify({'error': 'Invalid JSON data'}), 400
-        if not data['id']:
-            return jsonify({'error': 'Missing required value "id"'}), 400   
-        try:
-            location = container.get('addLocationResident').do(id, int(data['id']))
-        except ValueError as e:
-            return jsonify({'error': str(e)}), 400
-        except NotFoundException as e:
-            return jsonify({'error': str(e)}), 404
-        return location
-    
-
-    @bp.delete('locations/<int:locationId>/residents/<int:characterId>')
-    def delLocationResident(locationId, characterId):
-        location = locationRepo.findOne(locationId)
-
-        if not location or not location['residents']:
-            return jsonify({'error': 'Not found'}), 404
-        try:
-            location = container.get('deleteLocationResident').do(location, characterId)
-        except ValueError as e:
-            return jsonify({'error': str(e)}), 400
-        return jsonify(location)
-
-
     @bp.errorhandler(Exception)
     def handle_error(e):
         return jsonify({'error': str(e)}), 500

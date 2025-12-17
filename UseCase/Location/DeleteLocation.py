@@ -10,7 +10,7 @@ class DeleteLocation:
 
     def do(self, locationId):
         location = self.locationRepo.findOne(locationId)
-        pprint(location)
+
         if not location:
             raise NotFoundException()
         if 'episodes' in location and len(location['episodes']) > 0:

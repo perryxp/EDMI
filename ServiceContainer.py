@@ -15,12 +15,11 @@ from UseCase import (
     UpdateLocation,
     PartialUpdateLocation,
     DeleteLocation,
-    AddLocationResident,
-    DeleteLocationResident,
     EpisodesPaginator,
     CreateEpisode,
     UpdateEpisode,
     PartialUpdateEpisode,
+    DeleteEpisode,
     AddEpisodeCharacter,
     AddEpisodeLocation,
     DeleteEpisodeLocation,
@@ -64,23 +63,26 @@ class ServiceContainer:
             'updateLocation': lambda: UpdateLocation(self.get('locationRepository')),
             'partialUpdateLocation': lambda: PartialUpdateLocation(self.get('locationRepository')),
             'deleteLocation': lambda: DeleteLocation(self.get('locationRepository')),
-            'addLocationResident': lambda: AddLocationResident(self.get('locationRepository'), self.get('characterRepository')),
-            'deleteLocationResident': lambda: DeleteLocationResident(self.get('locationRepository'), self.get('characterRepository')),
             'episodesPaginator': lambda: EpisodesPaginator(self.get('episodeRepository')),
             'createEpisode': lambda: CreateEpisode(self.get('episodeRepository')),
             'updateEpisode': lambda: UpdateEpisode(self.get('episodeRepository')),
             'partialUpdateEpisode': lambda: PartialUpdateEpisode(self.get('episodeRepository')),
+            'deleteEpisode': lambda: DeleteEpisode(self.get('episodeRepository')),
             'addEpisodeLocation': lambda: AddEpisodeLocation(
                 self.get('episodeRepository'),
                 self.get('locationRepository'),
             ),
-            'deleteEpisodeLocation': lambda: DeleteEpisodeLocation(self.get('episodeRepository')),
+            'deleteEpisodeLocation': lambda: DeleteEpisodeLocation(
+                self.get('episodeRepository'),
+                self.get('locationRepository'),
+            ),
             'addEpisodeCharacter': lambda: AddEpisodeCharacter(
                 self.get('episodeRepository'),
                 self.get('characterRepository'),
             ),
             'deleteEpisodeCharacter': lambda: DeleteEpisodeCharacter(
                 self.get('episodeRepository'),
+                self.get('characterRepository')
             ),
         }
 

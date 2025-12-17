@@ -9,12 +9,11 @@ from .Location.CreateLocation import CreateLocation
 from .Location.UpdateLocation import UpdateLocation
 from .Location.PartialUpdateLocation import PartialUpdateLocation
 from .Location.DeleteLocation import DeleteLocation
-from .Location.AddLocationResident import AddLocationResident
-from .Location.DeleteLocationResident import DeleteLocationResident
 from .Episode.EpisodesPaginator import EpisodesPaginator
 from .Episode.CreateEpisode import CreateEpisode
 from .Episode.UpdateEpisode import UpdateEpisode
 from .Episode.PartialUpdateEpisode import PartialUpdateEpisode
+from .Episode.DeleteEpisode import DeleteEpisode
 from .Episode.AddEpisodeLocation import AddEpisodeLocation
 from .Episode.DeleteEpisodeLocation import DeleteEpisodeLocation
 from .Episode.AddEpisodeCharacter import AddEpisodeCharacter
@@ -31,12 +30,11 @@ __all__ = [
     'UpdateLocation',
     'PartialUpdateLocation',
     'DeleteLocation',
-    'AddLocationResident',
-    'DeleteLocationResident',
     'EpisodesPaginator',
     'CreateEpisode',
     'UpdateEpisode',
     'PartialUpdateEpisode',
+    'DeleteEpisode',
     'AddEpisodeCharacter',
     'AddEpisodeLocation',
     'DeleteEpisodeLocation',

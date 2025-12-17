@@ -4,13 +4,9 @@ from pprint import pprint
 
 class DeleteEpisode:
     episodeRepo = None
-    locationRepo = None
-    dbManager = None
 
-    def __init__(self, episodeRepo, locationRepo, dbManager):
+    def __init__(self, episodeRepo):
         self.episodeRepo = episodeRepo
-        self.locationRepo = locationRepo
-        self.dbManager = dbManager
 
     def do(self, episodeId):
         episode = self.episodeRepo.findOne(episodeId)
