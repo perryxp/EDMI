@@ -18,8 +18,9 @@ class EpisodeRepository:
     def count(self, filter = {}):
         return self.episodeCollection.count_documents(filter)
     
-    def addEpisode(self, episode, session = None):
-        id = self.__calculateNextId()
+    def addEpisode(self, episode, id = None, session = None):
+        if not id:
+            id = self.__calculateNextId()
         episode['id'] = id
         self.episodeCollection.insert_one(episode)
         return self.findOne(episode['id'])

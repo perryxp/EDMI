@@ -16,8 +16,10 @@ class AddEpisodeCharacter:
         episode = self.episodeRepo.findOne(episodeId)
         character = self.characterRepo.findOne(characterId)
 
-        if not episode or not character:
+        if not episode:
             raise NotFoundException(f'Episode {episodeId} not found')
+        if not character:
+            raise NotFoundException(f'Character {characterId} not found')
 
         data = Character.getReferenceData(character)
         if not 'characters' in episode:

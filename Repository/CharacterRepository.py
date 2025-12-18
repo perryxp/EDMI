@@ -7,8 +7,8 @@ class CharacterRepository:
     episodeCollection = None
 
     def __init__(self, db):
-        self.characterCollection = db.getCollection("rick&morty", "characters")
-        self.episodeCollection = db.getCollection("rick&morty", "episodes")
+        self.characterCollection = db.getCollection('rick&morty', 'characters')
+        self.episodeCollection = db.getCollection('rick&morty', 'episodes')
 
     def findOne(self, id):
         character = self.characterCollection.find_one({'id': id}, {'_id': 0})
@@ -25,8 +25,9 @@ class CharacterRepository:
     def count(self, filter = {}):
         return self.characterCollection.count_documents(filter)
 
-    def addCharacter(self, character, session = None):
-        id = self.__calculateNextId()
+    def addCharacter(self, character, id = None, session = None):
+        if not id:
+            id = self.__calculateNextId()
         character['id'] = id
         self.characterCollection.insert_one(character)
         return self.findOne(id)

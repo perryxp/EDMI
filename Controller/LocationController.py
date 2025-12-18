@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from Exception.NotFoundException import NotFoundException
 from Exception.ConflictException import ConflictException
+from werkzeug.exceptions import HTTPException
+from Security.Decorator import requireApikey
 from pprint import pprint
 
 def create_location_blueprint(container):
@@ -29,6 +31,7 @@ def create_location_blueprint(container):
     
     
     @bp.post('/locations')
+    @requireApikey
     def postLocation():
         data = request.json
         try:
@@ -36,10 +39,11 @@ def create_location_blueprint(container):
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
         
-        return jsonify(location)
+        return jsonify(location), 201
 
     
     @bp.put('/locations/<int:id>')
+    @requireApikey
     def putLocation(id):        
         data = request.json
         if not data:
@@ -54,6 +58,7 @@ def create_location_blueprint(container):
         return jsonify(location)
     
     @bp.patch('/locations/<int:id>')
+    @requireApikey
     def patchLocation(id):
         data = request.json
 
@@ -69,6 +74,7 @@ def create_location_blueprint(container):
         
         
     @bp.delete('/locations/<int:id>')
+    @requireApikey
     def deleteLocation(id):
         try:
             container.get('deleteLocation').do(id)
@@ -78,6 +84,13 @@ def create_location_blueprint(container):
             return jsonify({'error': str(e)}), 409
         return [], 204
     
+    
+    @bp.errorhandler(HTTPException)
+    def handle_http_error(e):
+        return jsonify({
+            "error": e.name,
+            "message": e.description
+        }), e.code
     
     @bp.errorhandler(Exception)
     def handle_error(e):

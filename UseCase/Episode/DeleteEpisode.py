@@ -10,6 +10,5 @@ class DeleteEpisode:
 
     def do(self, episodeId):
         episode = self.episodeRepo.findOne(episodeId)
-        if not episode:
-            raise NotFoundException()        
-        self.episodeRepo.deleteEpisode(episodeId)
+        if episode:
+            self.episodeRepo.deleteEpisode(episodeId)

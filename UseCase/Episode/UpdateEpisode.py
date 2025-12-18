@@ -11,9 +11,10 @@ class UpdateEpisode:
         self.episodeRepo = repository
 
     def do(self, id, data):
+        create = False
         episode = self.episodeRepo.findOne(id)
         if not episode:
-            raise NotFoundException()
+            create = True
         episode = Episode.create(data)
         episode['id'] = id
-        return self.episodeRepo.updateEpisode(episode)
+        return self.episodeRepo.addEpisode(episode, id) if create else self.episodeRepo.updateEpisode(episode)

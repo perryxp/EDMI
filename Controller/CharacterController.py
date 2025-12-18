@@ -42,10 +42,11 @@ def create_character_blueprint(container):
             character = container.get('createCharacter').do(data)
         except ValueError as e:
             return jsonify({'error': str(e)}), 400
-        return jsonify(character)
+        return jsonify(character), 201
 
     
     @bp.put('/characters/<int:id>')
+    @requireApikey
     def putCharacter(id):        
         data = request.json
         if not data:
@@ -61,6 +62,7 @@ def create_character_blueprint(container):
         return jsonify(character)
     
     @bp.patch('/characters/<int:id>')
+    @requireApikey
     def patchCharacter(id):
         data = request.json
         if not data:
@@ -77,6 +79,7 @@ def create_character_blueprint(container):
         
         
     @bp.delete('/characters/<int:id>')
+    @requireApikey
     def deleteCharacter(id):
         try:
             container.get('deleteCharacter').do(id)
@@ -86,6 +89,7 @@ def create_character_blueprint(container):
     
 
     @bp.put('characters/<int:id>/location')
+    @requireApikey
     def putCharacterLocation(id):
         data = request.json
         if not data:
@@ -104,6 +108,7 @@ def create_character_blueprint(container):
     
 
     @bp.post('characters/<int:characterId>/episodes')
+    @requireApikey
     def postCharacterEpisodes(characterId):
         data = request.json
         if not data:
@@ -122,6 +127,7 @@ def create_character_blueprint(container):
     
 
     @bp.delete('characters/<int:characterId>/episodes/<int:episodeId>')
+    @requireApikey
     def delCharacterEpisode(characterId, episodeId):
         try:
             character = container.get('deleteEpisodeCharacter').do(episodeId, characterId)['character']
@@ -129,7 +135,7 @@ def create_character_blueprint(container):
             return jsonify({'error': str(e)}), 400
         except NotFoundException as e:
             return jsonify({'error': str(e)}), 404
-        
+        # return [], 204
         return jsonify(character)
 
 

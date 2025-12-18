@@ -12,7 +12,7 @@ class DeleteLocation:
         location = self.locationRepo.findOne(locationId)
 
         if not location:
-            raise NotFoundException()
+            return
         if 'episodes' in location and len(location['episodes']) > 0:
             raise ConflictException(f'Location "{location['name']}" exists in episodes {str(location['episodes'])}')
         if 'residents' in location and len(location['residents']) > 0:

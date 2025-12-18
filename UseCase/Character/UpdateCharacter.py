@@ -15,9 +15,10 @@ class UpdateCharacter:
         self.locationRepo = locationRepo
 
     def do(self, id, data):
+        create = False
         character = self.characterRepo.findOne(id)
         if not character:
-            raise NotFoundException()
+            create = True
         
         origin = self.locationRepo.findOne(data['origin'])
         if origin is None:
@@ -26,4 +27,4 @@ class UpdateCharacter:
         data['origin'] = Location.getReferenceData(origin)
         character = Character.create(data)
         character['id'] = id
-        return self.characterRepo.updateCharacter(character)
+        return self.characterRepo.addCharacter(character, id) if create else self.characterRepo.updateCharacter(character)

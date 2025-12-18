@@ -15,7 +15,6 @@ class SecurityService:
 
         if not apikey:
             raise Unauthorized('API KEY required')
-            abort(401, "API key required")
 
         apikeyInfo = self.validateApikey(apikey)
         self.checkRateLimit(apikeyInfo)

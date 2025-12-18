@@ -11,9 +11,10 @@ class UpdateLocation:
         self.locationRepo = repository
 
     def do(self, id, data):
+        create = False
         location = self.locationRepo.findOne(id)
         if not location:
-            raise NotFoundException
+            create = True
         location = Location.create(data)
         location['id'] = id
-        return self.locationRepo.updateLocation(location)
+        return self.locationRepo.addLocation(location, id) if create else self.locationRepo.updateLocation(location)

@@ -24,5 +24,5 @@ class DeleteEpisodeCharacter:
             if characterInfo['id'] == characterId:
                 del episode['characters'][i]
                 episode = self.episodeRepo.updateEpisode(episode)
-                return {'episode': episode, 'character': self.characterRepo.findOne(characterId)}
-        raise NotFoundException(f'Character {str(Character.getReferenceData(character))} is not related to episode {str(Episode.getReferenceData(episode))}')
+            return {'episode': episode, 'character': self.characterRepo.findOne(characterId)}
+        # raise NotFoundException(f'Character {str(Character.getReferenceData(character))} is not related to episode {str(Episode.getReferenceData(episode))}')

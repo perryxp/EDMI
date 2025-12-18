@@ -22,5 +22,5 @@ class DeleteEpisodeLocation:
             if locationInfo['id'] == locationId:
                 del episode['locations'][i]
                 episode = self.episodeRepo.updateEpisode(episode)
-                return {'episode': episode, 'location': self.locationRepo.findOne(locationId)}
-        raise NotFoundException(f'Location {str(Location.getReferenceData(location))} is not related to episode {str(Episode.getReferenceData(episode))}')
+            return {'episode': episode, 'location': self.locationRepo.findOne(locationId)}
+        # raise NotFoundException(f'Location {str(Location.getReferenceData(location))} is not related to episode {str(Episode.getReferenceData(episode))}')

@@ -30,8 +30,9 @@ class LocationRepository:
     def count(self, filter = {}):
         return self.locationCollection.count_documents(filter)
     
-    def addLocation(self, location):
-        id = self.__calculateNextId()
+    def addLocation(self, location, id = None):
+        if not id:
+            id = self.__calculateNextId()
         location['id'] = id
         self.locationCollection.insert_one(location)
         return self.findOne(location['id'])
@@ -67,7 +68,8 @@ class LocationRepository:
         return [Episode.getReferenceData(ep) for ep in episodes]
     
     def _attachCharacterReference(self, location):
-        location['characters'] = self.findCharactersByLocation(location['id'])
+        location['residents'] = self.findCharactersByLocation(location['id'])
+        self.findCharactersByLocation(location['id'])
         return location
     
     def _attachCharacterReferences(self, locations):
@@ -76,5 +78,5 @@ class LocationRepository:
         return locations
     
     def findCharactersByLocation(self, locationId):
-        characters = list(self.characterCollection.find({'locations.id': locationId}))
+        characters = list(self.characterCollection.find({'location.id': locationId}))
         return [Character.getReferenceData(ep) for ep in characters]

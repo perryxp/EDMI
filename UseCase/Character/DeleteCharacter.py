@@ -15,7 +15,7 @@ class DeleteCharacter:
     def do(self, characterId):
         character = self.characterRepo.findOne(characterId)
         if not character:
-            raise NotFoundException()
+            return 
         
         if 'episodes' in character and len(character['episodes']) > 0:
             raise ConflictException(f'Character "{character['name']}" exists in episodes {str(character['episodes'])}')
@@ -27,7 +27,7 @@ class DeleteCharacter:
                 
 
     def __deleteResidentFromLocation(self, resident, session):    
-        location = self.locationRepo.findOne(['location']['id'])        
+        location = self.locationRepo.findOne(resident['location']['id'])        
         for i, residentInfo in enumerate(location['residents']):
             if residentInfo['id'] == resident['id']:
                 del location['residents'][i]
