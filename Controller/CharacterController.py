@@ -1,11 +1,17 @@
 from flask import Blueprint, jsonify, request
 from Exception.NotFoundException import NotFoundException
 from Exception.InvalidParameterException import InvalidParameterException
+from werkzeug.exceptions import HTTPException
+from Security.Decorator import requireApikey
 from pprint import pprint
 
 def create_character_blueprint(container):
-    characterRepo = container.get("characterRepository")   
+    characterRepo = container.get('characterRepository')   
     bp = Blueprint('characters', __name__)
+
+    # @bp.before_request
+    # def secure_blueprint():
+    #     container.get('securityService').authorize(request)
 
     @bp.get('/characters')
     def getCharacters():
@@ -29,6 +35,7 @@ def create_character_blueprint(container):
     
     
     @bp.post('/characters')
+    @requireApikey
     def postCharacter():
         data = request.json
         try:
@@ -125,6 +132,13 @@ def create_character_blueprint(container):
         
         return jsonify(character)
 
+
+    @bp.errorhandler(HTTPException)
+    def handle_http_error(e):
+        return jsonify({
+            "error": e.name,
+            "message": e.description
+        }), e.code
 
     @bp.errorhandler(Exception)
     def handle_error(e):

@@ -1,7 +1,12 @@
+from Security.SecurityService import SecurityService
+from Security.AuthService import AuthService
 from Repository import (
     CharacterRepository,
     LocationRepository,
-    EpisodeRepository
+    EpisodeRepository,
+    ApiKeyRepository,
+    RequestRepository,
+    UserRepository,
 )
 
 from UseCase import (
@@ -31,12 +36,24 @@ class ServiceContainer:
     def __init__(self, db):
         self.db = db
 
-        # Mapa de clases para lazy-loading
         self._serviceClasses = {
+            #Seguridad
+            'securityService': lambda: SecurityService(
+                self.get('apikeyRepository'), 
+                self.get('requestRepository')
+            ),
+            'authService': lambda: AuthService(
+                self.get('userRepository'),
+                self.get('apikeyRepository'),
+            ),
+
             # Repositorios
             'characterRepository': lambda: CharacterRepository(self.db),
             'locationRepository': lambda: LocationRepository(self.db),
             'episodeRepository': lambda: EpisodeRepository(self.db),
+            'apikeyRepository': lambda: ApiKeyRepository(self.db),
+            'requestRepository': lambda: RequestRepository(self.db),
+            'userRepository': lambda: UserRepository(self.db),
 
             # Casos de uso
             'createCharacter': lambda: CreateCharacter(

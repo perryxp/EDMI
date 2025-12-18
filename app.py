@@ -1,55 +1,26 @@
 from flask import Flask
 from extensions import init_extensions
 from Controller.CharacterController import create_character_blueprint
-from Repository.CharacterRepository import CharacterRepository
-from Repository.LocationRepository import LocationRepository
-from Repository.EpisodeRepository import EpisodeRepository
-from UseCase import (
-    CreateCharacter,
-    UpdateCharacter,
-    PartialUpdateCharacter,
-    UpdateCharacterLocation,
-    AddCharacterEpisode,
-    DeleteCharacterEpisode,
-    CharactersPaginator,
-)
+from Controller.LocationController import create_location_blueprint
+from Controller.EpisodeController import create_episode_blueprint
+from Controller.AuthController import create_auth_blueprint
+from ServiceContainer import ServiceContainer
 
 def create_app():
     app = Flask(__name__)
+    app.db = init_extensions(app)
 
-    # inicializa DB y extensiones
-    db = init_extensions(app)
-
-    # instanciar repositorios
-    characterRepository = CharacterRepository(db)
-    locationRepository = LocationRepository(db)
-    episodeRepository = EpisodeRepository(db)
-    # casos de uso instanciados aquí
-    createCharacter = CreateCharacter(characterRepository)
-    updateCharacter = UpdateCharacter(characterRepository)
-    partialUpdateCharacter = PartialUpdateCharacter(characterRepository)
-    updateCharacterLocation = UpdateCharacterLocation(characterRepository)
-    addCharacterEpisode = AddCharacterEpisode(characterRepository, episodeRepository)
-    deleteCharacterEpisode = DeleteCharacterEpisode(characterRepository, episodeRepository)
-    characterPaginator = CharactersPaginator(characterRepository)
-    # update_character_uc = UpdateCharacterUseCase(repo)
-    # registra el blueprint pasándole el repo ya configurado
-    character_controller = create_character_blueprint(
-        characterRepository,
-        createCharacter,
-        updateCharacter,
-        partialUpdateCharacter,
-        locationRepository,
-        updateCharacterLocation,
-        addCharacterEpisode,
-        episodeRepository,
-        deleteCharacterEpisode,
-        characterPaginator,
-    )
-    app.register_blueprint(character_controller, url_prefix="/api/v1")
+    app.container = ServiceContainer(app.db)
+    authController = create_auth_blueprint(app.container)
+    characterController = create_character_blueprint(app.container)
+    locationController = create_location_blueprint(app.container)
+    episodeController = create_episode_blueprint(app.container)
+    app.register_blueprint(characterController, url_prefix = '/api/v1')
+    app.register_blueprint(locationController, url_prefix = '/api/v1')
+    app.register_blueprint(episodeController, url_prefix = '/api/v1')
+    app.register_blueprint(authController, url_prefix = '/api')
 
     return app
-
 
 if __name__ == "__main__":
     app = create_app()
